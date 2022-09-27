@@ -20,7 +20,7 @@ const AboutUsContainer = styled.div`
     bg-white
   `};
 `;
-
+// For car image
 const CarContainer = styled.div`
   width: auto;
   height: 15em;
