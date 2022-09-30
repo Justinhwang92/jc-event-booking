@@ -10,8 +10,10 @@ import { SCREENS } from '../../components/responsive';
 import carService from '../../services/carService';
 import { GetCars_cars } from '../../services/carService/__generated__/GetCars';
 import { setTopCars } from './slice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
+import { createSelector } from 'reselect';
+import { makeSelectTopCars } from './selectors';
 
 const TopCarsContainer = styled.div`
   ${tw`
@@ -49,9 +51,24 @@ const CarsContainer = styled.div`
   `};
 `;
 
+const EmptyCars = styled.div`
+  ${tw`
+    w-full
+    flex
+    justify-center
+    items-center
+    text-sm
+    text-gray-500
+  `};
+`;
+
 const actionDispatch = (dispatch: Dispatch) => ({
   setTopCars: (cars: GetCars_cars[]) => dispatch(setTopCars(cars)),
 });
+
+const stateSelector = createSelector(makeSelectTopCars, (topCars) => ({
+  topCars,
+}));
 
 export function TopCars() {
   const [current, setCurrent] = useState(0);
@@ -59,7 +76,8 @@ export function TopCars() {
   // for mobile devices
   const isMobile = useMediaQuery({ maxWidth: SCREENS.sm });
 
-  const { setTopCars } = actionDispatch(useDispatch());
+  const { topCars } = useSelector(stateSelector); // get top cars from redux store
+  const { setTopCars } = actionDispatch(useDispatch()); // set top cars in redux store
 
   // Fetch cars from the server
   const fetchTopCars = async () => {
@@ -74,6 +92,12 @@ export function TopCars() {
   useEffect(() => {
     fetchTopCars();
   }, []);
+
+  const isTopCarsEmpty = !topCars || topCars.length === 0;
+  const cars =
+    (!isTopCarsEmpty &&
+      topCars.map((car) => <Car {...car} thumbnailSrc={car.thumbnailUrl} />)) ||
+    [];
 
   // Test Cases
   const testCar: ICar = {
@@ -98,63 +122,66 @@ export function TopCars() {
     gas: 'Petrol',
   };
 
-  const cars = [
-    <Car {...testCar} />,
-    <Car {...testCar2} />,
-    <Car {...testCar} />,
-    <Car {...testCar2} />,
-    <Car {...testCar} />,
-  ];
+  // const cars = [
+  //   <Car {...testCar} />,
+  //   <Car {...testCar2} />,
+  //   <Car {...testCar} />,
+  //   <Car {...testCar2} />,
+  //   <Car {...testCar} />,
+  // ];
 
   const numberOfDots = isMobile ? cars.length : Math.ceil(cars.length / 3);
 
   return (
     <TopCarsContainer>
       <Title>Explore Our Top Deals</Title>
-      <CarsContainer>
-        <Carousel
-          value={current}
-          onChange={setCurrent}
-          slides={cars}
-          plugins={[
-            'clickToChange',
-            {
-              resolve: slidesToShowPlugin,
-              options: {
-                numberOfSlides: 3,
+      {isTopCarsEmpty && <EmptyCars>No cars to show.</EmptyCars>}
+      {!isTopCarsEmpty && (
+        <CarsContainer>
+          <Carousel
+            value={current}
+            onChange={setCurrent}
+            slides={cars}
+            plugins={[
+              'clickToChange',
+              {
+                resolve: slidesToShowPlugin,
+                options: {
+                  numberOfSlides: 3,
+                },
               },
-            },
-          ]}
-          // Depends on display size
-          breakpoints={{
-            640: {
-              plugins: [
-                {
-                  resolve: slidesToShowPlugin,
-                  options: {
-                    numberOfSlides: 1,
+            ]}
+            // Depends on display size
+            breakpoints={{
+              640: {
+                plugins: [
+                  {
+                    resolve: slidesToShowPlugin,
+                    options: {
+                      numberOfSlides: 1,
+                    },
                   },
-                },
-              ],
-            },
-            900: {
-              plugins: [
-                {
-                  resolve: slidesToShowPlugin,
-                  options: {
-                    numberOfSlides: 2,
+                ],
+              },
+              900: {
+                plugins: [
+                  {
+                    resolve: slidesToShowPlugin,
+                    options: {
+                      numberOfSlides: 2,
+                    },
                   },
-                },
-              ],
-            },
-          }}
-        />
-        <Dots
-          value={current}
-          onChange={setCurrent}
-          number={isMobile ? cars.length : numberOfDots}
-        />
-      </CarsContainer>
+                ],
+              },
+            }}
+          />
+          <Dots
+            value={current}
+            onChange={setCurrent}
+            number={isMobile ? cars.length : numberOfDots}
+          />
+        </CarsContainer>
+      )}
     </TopCarsContainer>
   );
 }

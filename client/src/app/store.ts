@@ -6,6 +6,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(reduxLogger),
   reducer: {
+    // root state for homePage
     homePage: homePageReducer,
   },
 });
