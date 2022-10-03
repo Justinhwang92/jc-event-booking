@@ -10,7 +10,7 @@ const homePageSlice = createSlice({
   initialState,
   reducers: {
     setTopCars: (state, action) => {
-      state.topCars = action.payload;
+      state.topCars = action.payload.cars;
     },
   },
 });
