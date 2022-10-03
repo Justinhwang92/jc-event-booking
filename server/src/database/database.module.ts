@@ -1,10 +1,19 @@
 import { Module } from '@nestjs/common';
-import { Connection } from 'typeorm';
+import { Connection, getConnectionOptions } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as ormconfig from '../../ormconfig';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(ormconfig)],
+  imports: [
+    TypeOrmModule.forRootAsync({
+      // use ormconfig.json file (default) to configure TypeORM
+      useFactory: async () =>
+        Object.assign(
+          await getConnectionOptions(
+            process.env.NODE_ENV === 'production' ? 'prod' : 'dev',
+          ),
+        ),
+    }),
+  ],
   exports: [TypeOrmModule],
 })
 export class DatabaseModule {
