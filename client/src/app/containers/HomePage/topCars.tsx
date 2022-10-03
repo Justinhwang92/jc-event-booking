@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { createSelector } from 'reselect';
 import { makeSelectTopCars } from './selectors';
+import MoonLoader from 'react-spinners/MoonLoader';
 
 const TopCarsContainer = styled.div`
   ${tw`
@@ -62,6 +63,18 @@ const EmptyCars = styled.div`
   `};
 `;
 
+const LoadingContainer = styled.div`
+  ${tw`
+    w-full
+    flex
+    justify-center
+    items-center
+    text-base
+    text-black
+    mt-9
+  `};
+`;
+
 const actionDispatch = (dispatch: Dispatch) => ({
   setTopCars: (cars: GetCars_cars[]) => dispatch(setTopCars(cars)),
 });
@@ -70,8 +83,13 @@ const stateSelector = createSelector(makeSelectTopCars, (topCars) => ({
   topCars,
 }));
 
+// for spinner testing
+const wait = (timeout: number) =>
+  new Promise((resolve) => setTimeout(resolve, timeout));
+
 export function TopCars() {
   const [current, setCurrent] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   // for mobile devices
   const isMobile = useMediaQuery({ maxWidth: SCREENS.sm });
@@ -81,12 +99,17 @@ export function TopCars() {
 
   // Fetch cars from the server
   const fetchTopCars = async () => {
+    setIsLoading(true);
     const cars = await carService.getCars().catch((err) => {
       console.log('Error: ' + err);
     });
 
-    console.log('Cars: ' + cars);
+    // for spinner testing
+    // await wait(5000);
+
+    // console.log('Cars: ' + cars);
     if (cars) setTopCars(cars);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -100,28 +123,27 @@ export function TopCars() {
     [];
 
   // Test Cases
-  const testCar: ICar = {
-    name: 'Audi S3 Car',
-    mileage: '10k',
-    thumbnailSrc:
-      'https://cdn.jdpower.com/Models/640x480/2017-Audi-S3-PremiumPlus.jpg',
-    dailyPrice: 70,
-    monthlyPrice: 1600,
-    gearType: 'Auto',
-    gas: 'Petrol',
-  };
+  // const testCar: ICar = {
+  //   name: 'Audi S3 Car',
+  //   mileage: '10k',
+  //   thumbnailSrc:
+  //     'https://cdn.jdpower.com/Models/640x480/2017-Audi-S3-PremiumPlus.jpg',
+  //   dailyPrice: 70,
+  //   monthlyPrice: 1600,
+  //   gearType: 'Auto',
+  //   gas: 'Petrol',
+  // };
 
-  const testCar2: ICar = {
-    name: 'HONDA cITY 5 Seater Car',
-    mileage: '20k',
-    thumbnailSrc:
-      'https://shinewiki.com/wp-content/uploads/2019/11/honda-city.jpg',
-    dailyPrice: 50,
-    monthlyPrice: 1500,
-    gearType: 'Auto',
-    gas: 'Petrol',
-  };
-
+  // const testCar2: ICar = {
+  //   name: 'HONDA cITY 5 Seater Car',
+  //   mileage: '20k',
+  //   thumbnailSrc:
+  //     'https://shinewiki.com/wp-content/uploads/2019/11/honda-city.jpg',
+  //   dailyPrice: 50,
+  //   monthlyPrice: 1500,
+  //   gearType: 'Auto',
+  //   gas: 'Petrol',
+  // };
   // const cars = [
   //   <Car {...testCar} />,
   //   <Car {...testCar2} />,
@@ -135,7 +157,12 @@ export function TopCars() {
   return (
     <TopCarsContainer>
       <Title>Explore Our Top Deals</Title>
-      {isTopCarsEmpty && <EmptyCars>No cars to show.</EmptyCars>}
+      {isLoading && (
+        <LoadingContainer>
+          <MoonLoader loading size={40} />
+        </LoadingContainer>
+      )}
+      {isTopCarsEmpty && !isLoading && <EmptyCars>No cars to show.</EmptyCars>}
       {!isTopCarsEmpty && (
         <CarsContainer>
           <Carousel

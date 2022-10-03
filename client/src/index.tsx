@@ -11,11 +11,9 @@ const container = document.getElementById('root')!;
 const root = createRoot(container);
 
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ApolloProvider client={apolloClient}>
-        <App />
-      </ApolloProvider>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <ApolloProvider client={apolloClient}>
+      <App />
+    </ApolloProvider>
+  </Provider>
 );
