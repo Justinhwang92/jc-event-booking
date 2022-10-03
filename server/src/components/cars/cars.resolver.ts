@@ -22,4 +22,21 @@ export class CarsResolver {
       throw err;
     });
   }
+
+  @Mutation((returns) => Car)
+  public async updateCar(
+    @Args('id') id: string,
+    @Args('newCarData') newCarData: NewCarInput,
+  ): Promise<Car> {
+    return await this.carsService.updateCar(id, newCarData).catch((err) => {
+      throw err;
+    });
+  }
+
+  @Mutation((returns) => Car)
+  public async deleteCar(@Args('id') id: string): Promise<Car> {
+    return await this.carsService.deleteCar(id).catch((err) => {
+      throw err;
+    });
+  }
 }

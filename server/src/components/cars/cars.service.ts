@@ -20,4 +20,27 @@ export class CarsService {
       throw new InternalServerErrorException();
     });
   }
+
+  public async updateCar(id: string, newCarData: NewCarInput): Promise<Car> {
+    const car = await this.carRepository.findOne(id);
+    if (!car) {
+      throw new InternalServerErrorException();
+    }
+
+    const updatedCar = Object.assign(car, newCarData);
+    return await this.carRepository.save(updatedCar).catch((error) => {
+      throw new InternalServerErrorException();
+    });
+  }
+
+  public async deleteCar(id: string): Promise<Car> {
+    const car = await this.carRepository.findOne(id);
+    if (!car) {
+      throw new InternalServerErrorException();
+    }
+
+    return await this.carRepository.remove(car).catch((error) => {
+      throw new InternalServerErrorException();
+    });
+  }
 }
