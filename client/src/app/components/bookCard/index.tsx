@@ -60,6 +60,7 @@ const SmallIcon = styled.span`
     text-xs
     md:text-base
     ml-1
+    cursor-pointer
   `}
 `;
 
@@ -106,9 +107,9 @@ const DateCalendar = styled(Calendar)<{ offset?: boolean }>`
 `;
 
 export function BookCard() {
-  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [startDate, setStartDate] = useState<Date>();
   const [isStartCalendarOpen, setStartCalendarOpen] = useState(false);
-  const [returnDate, setReturnDate] = useState<Date>(new Date());
+  const [returnDate, setReturnDate] = useState<Date>();
   const [isReturnCalendarOpen, setReturnCalendarOpen] = useState(false);
 
   const toggleStartDateCalendar = () => {
@@ -128,15 +129,30 @@ export function BookCard() {
         <Icon>
           <FontAwesomeIcon icon={faCalendarAlt} />
         </Icon>
-        <Name onClick={toggleStartDateCalendar}>Pick-Up Date</Name>
+        {/* if start date is not selected */}
+        {!startDate && (
+          <Name onClick={toggleStartDateCalendar}>Pick Up Date</Name>
+        )}
+        {/* if start date is selected */}
+        {startDate && (
+          <Name onClick={toggleStartDateCalendar}>
+            {startDate.toLocaleDateString()}
+          </Name>
+        )}
         <SmallIcon>
           <FontAwesomeIcon
             icon={isStartCalendarOpen ? faCaretUp : faCaretDown}
+            onClick={toggleStartDateCalendar}
           />
         </SmallIcon>
         {/* Calendar */}
         {isStartCalendarOpen && (
-          <DateCalendar value={startDate} onChange={setStartDate} />
+          <DateCalendar
+            value={startDate}
+            onChange={setStartDate}
+            calendarType="US"
+            minDate={new Date()}
+          />
         )}
       </ItemContainer>
       <LineSeparator />
@@ -145,15 +161,31 @@ export function BookCard() {
         <Icon>
           <FontAwesomeIcon icon={faCalendarAlt} />
         </Icon>
-        <Name onClick={toggleReturnDateCalendar}>Return Date</Name>
+        {/* if return date is not selected */}
+        {!returnDate && (
+          <Name onClick={toggleReturnDateCalendar}>Return Date</Name>
+        )}
+        {/* if return date is selected */}
+        {returnDate && (
+          <Name onClick={toggleReturnDateCalendar}>
+            {returnDate.toLocaleDateString()}
+          </Name>
+        )}
         <SmallIcon>
           <FontAwesomeIcon
             icon={isReturnCalendarOpen ? faCaretUp : faCaretDown}
+            onClick={toggleStartDateCalendar}
           />
         </SmallIcon>
         {/* Calendar */}
         {isReturnCalendarOpen && (
-          <DateCalendar offset value={returnDate} onChange={setReturnDate} />
+          <DateCalendar
+            offset
+            value={returnDate}
+            onChange={setReturnDate}
+            calendarType="US"
+            minDate={startDate}
+          />
         )}
       </ItemContainer>
       <Marginer direction="horizontal" margin="2em" />
