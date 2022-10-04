@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import tw from 'twin.macro';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -121,6 +121,18 @@ export function BookCard() {
     setReturnCalendarOpen(!isReturnCalendarOpen); // open return calendar
     if (isStartCalendarOpen) setStartCalendarOpen(false); // close start calendar
   };
+
+  // Auto calendar open and close
+  useEffect(() => {
+    if (startDate !== undefined) {
+      setStartCalendarOpen(!isStartCalendarOpen);
+      setReturnCalendarOpen(!isReturnCalendarOpen);
+    }
+    if (returnDate !== undefined) {
+      setStartCalendarOpen(false);
+      setReturnCalendarOpen(false);
+    }
+  }, [startDate, returnDate]);
 
   return (
     <CardContainer>
