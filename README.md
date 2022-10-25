@@ -8,7 +8,7 @@
 
 ### Video Demo
 
-<!-- ![demogif](demo.gif) -->
+![demogif](demo.gif)
 
 ---
 
