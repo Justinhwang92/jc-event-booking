@@ -32,6 +32,10 @@
 
 This is a car rental web application with Tailwind CSS, styled-components, and Apollo GraphQL alongside its Node.js/Express.js Server Side app or putting together a full dedicated Car Models GraphQL API built on top of Nest.js Framework. Dockerized the whole Stack with MySQL Docker image and using the Nginx proxy to serve the running Nodejs applications on the server.
 
+### Infrastructure model
+
+![Insfrastructure model](infrastructure_model.png)
+
 ## Author
 
 - Justin Hwang
